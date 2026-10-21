@@ -1,0 +1,47 @@
+/**
+ * Google Antigravity (Gemini) implicit prompt cache.
+ *
+ * cloudcode-pa caches a stable prefix: systemInstruction + leading
+ * contents + tools. Usage hits arrive as cachedContentTokenCount
+ * (and CLI aliases cache_read_tokens / cacheReadTokens) mapped in
+ * request.ts. Sticky identity is request.sessionId — not Codex
+ * headers, not Grok x-grok-conv-id, not implicitCacheConfig.
+ *
+ * Official hub sessionId is one conversation (LLM_SESSION_ID). DSH
+ * session_id is kept as-is. When DSH omits it, fallback is
+ * dsh-antigravity:<model> so the picker cannot reuse another model's
+ * pin. Never stamp Date.now().
+ *
+ * DSH prepends a runtime-context system snapshot and may reshuffle
+ * tool JSON every step. First system / equivalent tools /
+ * thinkingConfig per real session are pinned; fallback ids never pin.
+ */
+/** When DSH sends neither session_id nor prompt_cache_key, key on a constant (never pinned). */
+export declare const ANTIGRAVITY_STABLE_SESSION = "dsh-antigravity";
+export declare function antigravityCacheSessionId(key: any): string | undefined;
+export declare function resetAntigravitySystemPins(): void;
+/** `dsh-antigravity` or `dsh-antigravity:<model>` is not a conversation: it never pins. */
+export declare function isAntigravityFallback(id: any): boolean;
+export declare function pinAntigravitySystemInstruction(sessionId: any, parts: any): {
+    parts: any;
+    extra: undefined;
+} | {
+    parts: {
+        text: any;
+    }[];
+    extra: any;
+};
+/**
+ * Reuse the first tools JSON when names+schemas match (canonical
+ * key order). Added or removed tools are a real change — send the
+ * new list and accept a cache miss.
+ */
+export declare function pinAntigravityTools(sessionId: any, tools: any): any;
+/**
+ * Sticky-first thinkingConfig. Once a session has sent (or omitted)
+ * a thinking object, keep that choice while later payloads omit
+ * reasoning_effort; an explicit, different reasoning_effort is the
+ * user changing it and replaces the pin. Do not invent implicitCacheConfig.
+ */
+export declare function pinAntigravityThinking(sessionId: any, thinking: any, effort?: any): any;
+export declare function antigravitySessionIdOf(payload?: any, explicit?: any): any;
