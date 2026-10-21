@@ -1,0 +1,80 @@
+{
+  "name": "dsh-plugin-oauth-subs",
+  "version": "0.0.110",
+  "description": "ChatGPT Codex, xAI Grok, Zhipu GLM, AWS Kiro, Google Antigravity, Cursor, Ollama Cloud, Kimi, and GitHub Copilot subscription OAuth for DeepSeek Harness — PKCE / device-code / Google login, local Responses proxy, llm-pi-ai sync.",
+  "license": "MIT",
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/xxww0098/dsh-plugin-oauth-subs.git"
+  },
+  "bugs": {
+    "url": "https://github.com/xxww0098/dsh-plugin-oauth-subs/issues"
+  },
+  "homepage": "https://github.com/xxww0098/dsh-plugin-oauth-subs#readme",
+  "type": "module",
+  "main": "lib/index.js",
+  "exports": {
+    ".": "./lib/index.js",
+    "./client": "./lib/ui/client.js",
+    "./analyze-session": "./lib/utils/analyze-session.js",
+    "./package.json": "./package.json"
+  },
+  "dsh": {
+    "client": {
+      "platform": "web",
+      "inject": [
+        "@deepseek-ai/dsh-client-runtime",
+        "@deepseek-ai/dsh-client-ui-layout",
+        "@deepseek-ai/dsh-client-ui-sidebar"
+      ],
+      "external": [
+        "@deepseek-ai/dsh-client-ui-primitives"
+      ]
+    },
+    "bundle": {
+      "patch": "./cordis.patch.yml"
+    }
+  },
+  "files": [
+    "lib",
+    "assets",
+    "scripts",
+    "cordis.patch.yml",
+    "AGENTS.md",
+    "README.md",
+    "README.zh.md"
+  ],
+  "scripts": {
+    "build": "tsc && tsc -p tsconfig.ui.json",
+    "dev-build": "npm run build && node --experimental-strip-types scripts/dev-build.ts",
+    "test": "npm run build && node --experimental-strip-types --test 'test/*.test.ts'",
+    "analyze": "node --experimental-strip-types scripts/analyze-session.ts",
+    "prepublishOnly": "npm test"
+  },
+  "keywords": [
+    "deepseek-harness",
+    "dsh-plugin",
+    "oauth",
+    "chatgpt",
+    "codex",
+    "grok",
+    "xai",
+    "glm",
+    "kiro",
+    "pkce",
+    "antigravity",
+    "google",
+    "cursor"
+  ],
+  "peerDependencies": {
+    "@deepseek-ai/cordis": "^4.0.1"
+  },
+  "dependencies": {
+    "@deepseek-ai/schemastery": "^3.18.1",
+    "undici": "^7.30.0"
+  },
+  "devDependencies": {
+    "@types/node": "^22.20.1",
+    "typescript": "^5.9.3"
+  }
+}
