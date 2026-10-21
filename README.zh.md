@@ -9,7 +9,10 @@
 
 把 **ChatGPT / Codex**、**xAI Grok**、**智谱 GLM**、**AWS Kiro**、**Google Antigravity**、**Cursor**、**Ollama Cloud**、**Kimi Code Plan**、**GitHub Copilot**、**Devin Agent**、**Cline**、**Claude** 的订阅，以及 **OpenCode Go** API key 接到 [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness)。订阅家族通过本机回环代理；OpenCode Go 直连其 API。模型路由使用 DSH 的 `openai-responses`、`openai-completions`、`anthropic-messages` 三种 `api`。
 
-![订阅工作台 —— 额度页签、账号卡片与供应商栏](docs/readme-workbench.jpg)
+## 出处
+
+- 本镜像创建于 **2026-10-21**，来源为本机安装的 `dsh-plugin-oauth-subs@0.0.110` 工件——该包**未**发布在公共 npm registry，上游仓库（`xxww0098/dsh-plugin-oauth-subs`）已下线（404），此为本工件仅存的拷贝。
+- 所有随包文件（`lib/`、`scripts/`、`assets/`、`cordis.patch.yml`、`package.json`、`LICENSE`、`AGENTS.md`）与原工件逐字节一致；仅有的文档级改动：顶部备份标注、本节，以及将 `docs/` 引用去链接化（这些文件从未随包发布，链接原本就是死链）。
 
 ## 安装
 
@@ -85,7 +88,7 @@ dsh web
 | 回环 | `http://127.0.0.1:8318/{codex,grok}/v1/responses`、`/glm/v1/messages`（Completions 残留 `/glm/v1/chat/completions` 留到下次 sync）、`/{kiro,antigravity,cursor,ollama,kimi,copilot,devin,cline}/v1/chat/completions` |
 | 上游 | 使用刷新后的订阅令牌或活动 OpenCode Go API key |
 
-面板关闭后，DSH 继续使用已配置的路由。代理只监听回环地址，并用本地凭证 `DSH_OAUTH_SUBS_API_KEY` 鉴权；OpenCode Go 不经过它。技术栈与模块树：[AGENTS.md](AGENTS.md)。上游对照：[docs/oauth.md](docs/oauth.md)。
+面板关闭后，DSH 继续使用已配置的路由。代理只监听回环地址，并用本地凭证 `DSH_OAUTH_SUBS_API_KEY` 鉴权；OpenCode Go 不经过它。技术栈与模块树：[AGENTS.md](AGENTS.md)。上游对照：`docs/oauth.md`。
 
 ## 缓存
 
@@ -99,10 +102,7 @@ dsh web
 | 前缀改写 | — | 1 次适配器重建 + 9 次压缩 |
 | TRANSPORT 故障 | 29 | 0 |
 
-![Codex 缓存命中](docs/readme-cache-hit.svg)
-![Codex 亲和丢失与 TRANSPORT](docs/readme-cache-faults.svg)
-
-剩下的未缓存几乎都是新的工具输出（`delta`），加上预期的前缀改写：退出 plan（step 55，169k）和 DSH 压缩（330k）；每次改写后的下一拍复用约 99%。健康规则：加权命中 ≥ **80%**，**亲和丢失为 0**，且无 TRANSPORT。压缩 / `request/header` 重建造成的零缓存不会判失败。细节见 [docs/error.md](docs/error.md)。
+剩下的未缓存几乎都是新的工具输出（`delta`），加上预期的前缀改写：退出 plan（step 55，169k）和 DSH 压缩（330k）；每次改写后的下一拍复用约 99%。健康规则：加权命中 ≥ **80%**，**亲和丢失为 0**，且无 TRANSPORT。压缩 / `request/header` 重建造成的零缓存不会判失败。细节见 `docs/error.md`。
 
 ## 诊断
 
@@ -119,7 +119,7 @@ npm run analyze -- --dir ~/.dsh/sessions --since 30d [--until ISO] [--json] [--c
 
 ## Fast / 模型 / 推理
 
-登录和对话走官方客户端身份；UA / 指纹见各 `src/oauth/<id>/README.md`。对照仓库见 [docs/oauth.md](docs/oauth.md)。面板 **模型** 页签：按系列勾选（默认全开，**900K 除外**）。推理等级在 Harness **会话**模型菜单里设，不在「模型」页签。Fast 和 900K 都更耗额度。
+登录和对话走官方客户端身份；UA / 指纹见各 `src/oauth/<id>/README.md`。对照仓库见 `docs/oauth.md`。面板 **模型** 页签：按系列勾选（默认全开，**900K 除外**）。推理等级在 Harness **会话**模型菜单里设，不在「模型」页签。Fast 和 900K 都更耗额度。
 
 | 系列 | Fast | 窗口 | 思考 |
 |---|---|---|---|
@@ -136,7 +136,7 @@ npm run analyze -- --dir ~/.dsh/sessions --since 30d [--until ISO] [--json] [--c
 | Devin | 可以。`-fast` 是真后端变体（不是 Codex Priority），不过 `applyFastMode` | 登录后 live `GetCliModelConfigs`（2026-09-23：49 家族 / 81 个 picker 行；静态回落同镜像） | 按家族映射到后端 `chat_model_uid`（`defaultUid`）；`thinking` / `fast` / `1m` 收成独立 picker 行 |
 | Cline | 不行 | 登录后 live `GET /ai/cline/recommended-models`（静态 feed 快照回落） | minimal / low / medium / high / xhigh / max → `reasoning_effort`（`max`→`xhigh`） |
 | Claude | 不行 | 静态目录，逐行钉 pi-ai `anthropic.json`（Claude 订阅集合，并用 Kiro 行交叉核对） | 宿主原生分派：自适应 id（Opus 5 / 4.8 / 4.7、Sonnet 5 / 4.6、Fable）→ `output_config.effort`（4.6 家族止于 `max`）；经典 id 保持 budget thinking |
-| OpenCode Go | 不行 | Completions 28 行 + Responses 6 行；见[模型审查](docs/model-audit-2026-09-26.md) | 依具体模型；推理等级键遵循 DSH 闭集 |
+| OpenCode Go | 不行 | Completions 28 行 + Responses 6 行；见模型审查 `docs/model-audit-2026-09-26.md` | 依具体模型；推理等级键遵循 DSH 闭集 |
 
 Codex Priority 回显 `created=auto` / `completed=default` 不能当确认（openai/codex#14204）。2026-08-26 Luna：88.3 对 57.5 tok/s（1.54 倍）；2026-08-30 交错均值 1.33 倍（1.90 再 0.93）。只影响生成吞吐；首 token 时间和缓存不变。
 

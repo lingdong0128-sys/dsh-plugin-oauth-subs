@@ -9,7 +9,10 @@
 
 Use a **ChatGPT / Codex**, **xAI Grok**, **Zhipu GLM**, **AWS Kiro**, **Google Antigravity**, **Cursor**, **Ollama Cloud**, **Kimi Code Plan**, **GitHub Copilot**, **Devin Agent**, **Cline**, or **Claude** subscription—or an **OpenCode Go** API key—inside [DeepSeek Harness](https://github.com/deepseek-ai/deepseek-harness). The subscription families use a loopback proxy; OpenCode Go routes directly to its API. Model routes use the DSH `api` values `openai-responses`, `openai-completions`, and `anthropic-messages`.
 
-![Subscription workbench — quota tab with per-account cards and provider rail](docs/readme-workbench.jpg)
+## Provenance
+
+- This mirror was created on **2026-10-21** from the locally installed copy of `dsh-plugin-oauth-subs@0.0.110` — the package is **not** on the public npm registry, and the upstream repository (`xxww0098/dsh-plugin-oauth-subs`) is offline (404), making this the only surviving copy of the artifact.
+- All shipped files (`lib/`, `scripts/`, `assets/`, `cordis.patch.yml`, `package.json`, `LICENSE`, `AGENTS.md`) are byte-identical to that artifact. The only documentation-level changes: the attribution note above, this section, and de-linking `docs/` references (those files never shipped with the package, so the links were dead).
 
 ## Install
 
@@ -85,7 +88,7 @@ Subscription tokens: `<profile>/data/dsh-plugin-oauth-subs/auth.json` (`0600`). 
 | Loopback | `http://127.0.0.1:8318/{codex,grok}/v1/responses`, `/glm/v1/messages` (Completions leftover `/glm/v1/chat/completions` until the next sync), `/{kiro,antigravity,cursor,ollama,kimi,copilot,devin,cline}/v1/chat/completions` |
 | Upstream | Refreshed subscription bearer or the active OpenCode Go API key |
 
-After the panel closes, DSH continues using the configured routes. The proxy binds only to loopback and uses `DSH_OAUTH_SUBS_API_KEY`; OpenCode Go bypasses it. Stack and module tree: [AGENTS.md](AGENTS.md). Upstream references: [docs/oauth.md](docs/oauth.md).
+After the panel closes, DSH continues using the configured routes. The proxy binds only to loopback and uses `DSH_OAUTH_SUBS_API_KEY`; OpenCode Go bypasses it. Stack and module tree: [AGENTS.md](AGENTS.md). Upstream references: `docs/oauth.md`.
 
 ## Cache
 
@@ -99,10 +102,7 @@ Acceptance on the full `session-772f7f3a-…` SkillStar turn (`oauth-codex` / `g
 | Prefix rewrites | — | 1 adapter rebuild + 9 compaction |
 | TRANSPORT faults | 29 | 0 |
 
-![Codex cache hit](docs/readme-cache-hit.svg)
-![Codex affinity misses and TRANSPORT](docs/readme-cache-faults.svg)
-
-Remaining uncached tokens are almost all new tool output (`delta`) plus expected prefix rewrites: leaving plan mode (step 55, 169k) and DSH compaction (330k); the next call after each rewrite reused ~99%. Healthy: weighted hit ≥ **80%**, **zero affinity misses**, no TRANSPORT. Compaction / `request/header` rebuild zeros do not fail the session. Details: [docs/error.md](docs/error.md).
+Remaining uncached tokens are almost all new tool output (`delta`) plus expected prefix rewrites: leaving plan mode (step 55, 169k) and DSH compaction (330k); the next call after each rewrite reused ~99%. Healthy: weighted hit ≥ **80%**, **zero affinity misses**, no TRANSPORT. Compaction / `request/header` rebuild zeros do not fail the session. Details: `docs/error.md`.
 
 ## Diagnose
 
@@ -119,7 +119,7 @@ The analyzer labels each call `cold_start` / `delta` / `compaction` / `rebuild` 
 
 ## Fast / models / reasoning
 
-Login and chat use official client identity; UA / fingerprint live in each `src/oauth/<id>/README.md`. The repos those fingerprints were copied from are listed in [docs/oauth.md](docs/oauth.md). The panel's **Models** tab: per-family checkboxes (default all on except **900K**). Reasoning is set in the Harness session menu, not the Models tab. Fast and 900K spend quota faster.
+Login and chat use official client identity; UA / fingerprint live in each `src/oauth/<id>/README.md`. The repos those fingerprints were copied from are listed in `docs/oauth.md`. The panel's **Models** tab: per-family checkboxes (default all on except **900K**). Reasoning is set in the Harness session menu, not the Models tab. Fast and 900K spend quota faster.
 
 | Family | Fast | Window | Thinking |
 |---|---|---|---|
@@ -136,7 +136,7 @@ Login and chat use official client identity; UA / fingerprint live in each `src/
 | Devin | Yes. `-fast` is a real backend variant (not Codex Priority), never through `applyFastMode` | Live `GetCliModelConfigs` (2026-09-23: 49 families / 81 picker rows; the static fallback mirrors them) | Mapped to backend `chat_model_uid` per family (`defaultUid`); `thinking` / `fast` / `1m` become picker rows |
 | Cline | No | Live `GET /ai/cline/recommended-models` (static feed snapshot fallback) | minimal / low / medium / high / xhigh / max → `reasoning_effort` (`max`→`xhigh`) |
 | Claude | No | Static catalog pinned to pi-ai's `anthropic.json` (Claude Code set; cross-checked against Kiro rows) | Host-native mapping: adaptive ids (Opus 5 / 4.8 / 4.7, Sonnet 5 / 4.6, Fable) → `output_config.effort` (4.6 family to `max`); classic ids keep budget thinking |
-| OpenCode Go | No | 28 Completions + 6 Responses rows; see [model audit](docs/model-audit-2026-09-26.md) | Depends on the model; DSH closed effort keys |
+| OpenCode Go | No | 28 Completions + 6 Responses rows; see model audit `docs/model-audit-2026-09-26.md` | Depends on the model; DSH closed effort keys |
 
 Codex Priority echo `created=auto` / `completed=default` is not a confirmation (openai/codex#14204). 2026-08-26 Luna: 88.3 vs 57.5 tok/s (1.54×); 2026-08-30 interleaved mean 1.33× (1.90 then 0.93). Throughput-only; TTFT and cache unchanged.
 
