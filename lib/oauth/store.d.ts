@@ -1,0 +1,194 @@
+/**
+ * On-disk OAuth session store at `<dataDir>/auth.json`.
+ *
+ * The file is a JSON object keyed by provider id. Writes are atomic
+ * (tmp file + rename) with mode 0600 because they carry bearer tokens.
+ */
+import { readPrivateText, writePrivateText } from '../utils/private-text.js';
+export { readPrivateText, writePrivateText };
+export declare const PROVIDER_IDS: readonly string[];
+export declare function defaultDataDir(): string;
+export declare function authFilePath(dataDir?: string): string;
+export declare function accountIdOf(provider: any, session: any): any;
+export declare function asVault(provider: any, entry: any): {
+    activeId: any;
+    accounts: {};
+    generations: {};
+};
+export declare function loadStore(path: any): Promise<any>;
+export declare function getSession(provider: any, path: any): Promise<any>;
+export declare function listAccounts(provider: any, path: any): Promise<({
+    id: string;
+    active: boolean;
+} | {
+    account: any;
+    planType: any;
+    planLabel: any;
+    expiresAt: any;
+    region?: undefined;
+    needsValidation?: undefined;
+    validationUrl?: undefined;
+    method?: undefined;
+    methodLabel?: undefined;
+    organizationName?: undefined;
+    scopes?: undefined;
+    id: string;
+    active: boolean;
+} | {
+    account: string | undefined;
+    planType: any;
+    planLabel: any;
+    region: string;
+    expiresAt: any;
+    needsValidation?: undefined;
+    validationUrl?: undefined;
+    method?: undefined;
+    methodLabel?: undefined;
+    organizationName?: undefined;
+    scopes?: undefined;
+    id: string;
+    active: boolean;
+} | {
+    account: any;
+    planType: any;
+    planLabel: any;
+    expiresAt: any;
+    needsValidation: boolean;
+    validationUrl: any;
+    region?: undefined;
+    method?: undefined;
+    methodLabel?: undefined;
+    organizationName?: undefined;
+    scopes?: undefined;
+    id: string;
+    active: boolean;
+} | {
+    account: any;
+    planType: any;
+    planLabel: any;
+    method: any;
+    methodLabel: string | undefined;
+    expiresAt: any;
+    region?: undefined;
+    needsValidation?: undefined;
+    validationUrl?: undefined;
+    organizationName?: undefined;
+    scopes?: undefined;
+    id: string;
+    active: boolean;
+} | {
+    account: any;
+    planType: any;
+    planLabel: any;
+    method: any;
+    methodLabel: string | undefined;
+    organizationName: any;
+    expiresAt: any;
+    region?: undefined;
+    needsValidation?: undefined;
+    validationUrl?: undefined;
+    scopes?: undefined;
+    id: string;
+    active: boolean;
+} | {
+    account: any;
+    planType: any;
+    planLabel: any;
+    scopes: any;
+    expiresAt: any;
+    region?: undefined;
+    needsValidation?: undefined;
+    validationUrl?: undefined;
+    method?: undefined;
+    methodLabel?: undefined;
+    organizationName?: undefined;
+    id: string;
+    active: boolean;
+})[]>;
+export declare function listStoredSessions(provider: any, path: any): Promise<{
+    id: string;
+    session: any;
+    active: boolean;
+    generation: any;
+    version: string;
+}[]>;
+export declare function getStoredSession(provider: any, id: any, path: any): Promise<any>;
+/** Only update the login/credentials that produced the result; never activate it. */
+export declare function updateAccountSession(provider: any, source: any, session: any, path: any, nextId?: any): Promise<any>;
+export declare function replaceAccountId(provider: any, source: any, session: any, path: any): Promise<any>;
+export declare function saveSession(provider: any, session: any, path: any, options?: any): Promise<any>;
+export declare function switchAccount(provider: any, id: any, path: any): Promise<any>;
+export declare function deleteSession(provider: any, path: any, id: any, source?: any): Promise<any>;
+export declare function publicSession(provider: any, session: any): {
+    account: any;
+    planType: any;
+    planLabel: any;
+    expiresAt: any;
+    region?: undefined;
+    needsValidation?: undefined;
+    validationUrl?: undefined;
+    method?: undefined;
+    methodLabel?: undefined;
+    organizationName?: undefined;
+    scopes?: undefined;
+} | {
+    account: string | undefined;
+    planType: any;
+    planLabel: any;
+    region: string;
+    expiresAt: any;
+    needsValidation?: undefined;
+    validationUrl?: undefined;
+    method?: undefined;
+    methodLabel?: undefined;
+    organizationName?: undefined;
+    scopes?: undefined;
+} | {
+    account: any;
+    planType: any;
+    planLabel: any;
+    expiresAt: any;
+    needsValidation: boolean;
+    validationUrl: any;
+    region?: undefined;
+    method?: undefined;
+    methodLabel?: undefined;
+    organizationName?: undefined;
+    scopes?: undefined;
+} | {
+    account: any;
+    planType: any;
+    planLabel: any;
+    method: any;
+    methodLabel: string | undefined;
+    expiresAt: any;
+    region?: undefined;
+    needsValidation?: undefined;
+    validationUrl?: undefined;
+    organizationName?: undefined;
+    scopes?: undefined;
+} | {
+    account: any;
+    planType: any;
+    planLabel: any;
+    method: any;
+    methodLabel: string | undefined;
+    organizationName: any;
+    expiresAt: any;
+    region?: undefined;
+    needsValidation?: undefined;
+    validationUrl?: undefined;
+    scopes?: undefined;
+} | {
+    account: any;
+    planType: any;
+    planLabel: any;
+    scopes: any;
+    expiresAt: any;
+    region?: undefined;
+    needsValidation?: undefined;
+    validationUrl?: undefined;
+    method?: undefined;
+    methodLabel?: undefined;
+    organizationName?: undefined;
+} | undefined;
